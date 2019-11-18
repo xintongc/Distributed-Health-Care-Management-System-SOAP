@@ -10,12 +10,12 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 public class Client extends Thread implements Runnable{
-	static String clientID;
-	static String patientID;
-	static String oldAppointmentID;
-	static String oldAppointmentType;
-	static String newAppointmentID;
-	static String newAppointmentType;
+	 String clientID;
+	 String patientID;
+	 String oldAppointmentID;
+	 String oldAppointmentType;
+	 String newAppointmentID;
+	 String newAppointmentType;
 
 	ServerInterface MTLobj;
 	ServerInterface QUEobj;
@@ -47,6 +47,36 @@ public class Client extends Thread implements Runnable{
 
 	}
 
+	public Client(String clientID, String patientID,String oldAppointmentID, String oldAppointmentType,String newAppointmentID, String newAppointmentType) {
+
+		try {
+			URL urlMtl = new URL("http://localhost:9999/hw?wsdl");
+			QName mtlQName = new QName("http://Server/","MTLServerService");
+			Service mtlService = Service.create(urlMtl, mtlQName);
+			MTLobj = mtlService.getPort(ServerInterface.class);
+
+			URL urlQue = new URL("http://localhost:8888/hw?wsdl");
+			QName queQName = new QName("http://Server/","QUEServerService");
+			Service queService = Service.create(urlQue, queQName);
+			QUEobj = queService.getPort(ServerInterface.class);
+
+			URL urlShe = new URL("http://localhost:7777/hw?wsdl");
+			QName sheQName = new QName("http://Server/","SHEServerService");
+			Service sheService = Service.create(urlShe, sheQName);
+			SHEobj = sheService.getPort(ServerInterface.class);
+		}catch (Exception e) {
+			System.out.println("Client exception: " + e);
+			e.printStackTrace();
+		}
+		this.clientID=clientID;
+		this.patientID=patientID;
+		this.oldAppointmentID=oldAppointmentID;
+		this.oldAppointmentType=oldAppointmentType;
+		this.newAppointmentID=newAppointmentID;
+		this.newAppointmentType=newAppointmentType;
+	}
+
+
 	public static void main(String args[]) throws Exception
 	{
 
@@ -61,6 +91,14 @@ public class Client extends Thread implements Runnable{
 
 		String clientID="";
 		while(repeat) {
+
+			Scanner keyboardForThreadTest=new Scanner(System.in);
+			System.out.println("Multiple users login? yes/no");
+			String chooseForThreadTest=keyboardForThreadTest.nextLine();
+			if(chooseForThreadTest.equalsIgnoreCase("yes")) {
+				runThread();
+			}
+
 			
 			System.out.println("Please login with clientID:");
 			Scanner keyboard4=new Scanner(System.in);
@@ -192,6 +230,31 @@ public class Client extends Thread implements Runnable{
 			System.out.println("");
 		}
 	}
+
+	public static void runThread() {
+		Scanner keyboardForThreadTest=new Scanner(System.in);
+		System.out.println("How many clients login?");
+		int threadQty=keyboardForThreadTest.nextInt();
+		Client [] client=new Client[threadQty];
+		System.out.println("Please input information for all clients:");
+		for(int i=0;i<client.length;i++) {
+			System.out.println("Please input information for client: "+(i+1));
+			String clientIDTemp=setClientID();
+			String patientIDTemp=setPatientID();
+			System.out.println("Please type the old appointment ID and type:");
+			String oldAppointmentIDTemp=setAppointmentID();
+			String oldAppointmentTypeTemp=setAppointmentType();
+			System.out.println("Please type the new appointment ID and type:");
+			String newAppointmentIDTemp=setAppointmentID();
+			String newAppointmentTypeTemp=setAppointmentType();
+			client[i]=new Client(clientIDTemp,patientIDTemp,oldAppointmentIDTemp,oldAppointmentTypeTemp,newAppointmentIDTemp,newAppointmentTypeTemp);
+		}
+		System.out.println("Starting the test...");
+		for(int i=0;i<client.length;i++) {
+			client[i].start();
+		}
+	}
+
 
 	@Override
 	public void run() {
