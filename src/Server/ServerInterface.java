@@ -11,21 +11,13 @@ import java.io.IOException;
 public interface ServerInterface{
 
 	@WebMethod
-	boolean bookAppointment (String clientID, String patientID, String appointmentID, String appointmentType) throws Exception;
-	@WebMethod
-	void writeTxtClient (String clientID, String task, String resultStr);
-	@WebMethod
-	void writeTxtServerMTL (String clientID, String patientID, String appointmentType, String appointmentID, String task, String resultStr);
-	@WebMethod
-	void writeTxtServerQUE (String clientID, String patientID, String appointmentType, String appointmentID, String task, String resultStr);
-	@WebMethod
-	void writeTxtServerSHE (String clientID, String patientID, String appointmentType, String appointmentID, String task, String resultStr);
+	boolean bookAppointment (String patientID, String appointmentID, String appointmentType) throws Exception;
 	@WebMethod
 	boolean getAppointmentSchedule (String patientID);
 	@WebMethod
-	boolean cancelAppointment (String clientID, String patientID, String appointmentID, String appointmentType) throws ClassNotFoundException, IOException;
+	boolean cancelAppointment (String patientID, String appointmentID, String appointmentType) throws ClassNotFoundException, IOException;
 	@WebMethod
-	boolean swapAppointment (String clientID, String patientID, String oldAppointmentID, String oldAppointmentType, String newAppointmentID, String newAppointmentType) throws ClassNotFoundException, IOException;
+	boolean swapAppointment (String patientID, String oldAppointmentID, String oldAppointmentType, String newAppointmentID, String newAppointmentType) throws ClassNotFoundException, IOException;
 	@WebMethod
 	boolean addAppointment (String appointmentID, String appointmentType, String capacity, String appointmentWeekStr);
 	@WebMethod
@@ -34,5 +26,14 @@ public interface ServerInterface{
 	boolean removeAppointment (String appointmentID, String appointmentType);
 	@WebMethod
 	boolean listAppointmentAvailability (String appointmentType);
+
+	@WebMethod
+	void writeTxtClient (String clientID, String task, String resultStr);
+	@WebMethod
+	void writeTxtServerMTL (String clientID, String patientID, String appointmentType, String appointmentID, String task, String resultStr);
+	@WebMethod
+	void writeTxtServerQUE (String clientID, String patientID, String appointmentType, String appointmentID, String task, String resultStr);
+	@WebMethod
+	void writeTxtServerSHE (String clientID, String patientID, String appointmentType, String appointmentID, String task, String resultStr);
 
 }
