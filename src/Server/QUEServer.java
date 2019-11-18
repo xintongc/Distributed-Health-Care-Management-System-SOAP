@@ -149,7 +149,7 @@ public class QUEServer implements ServerInterface{
 		map.get(appointmentType).get(appointmentID).set(0, changedStr);		
 	}
 	
-	public synchronized boolean bookAppointment(String clientID,String patientID, String appointmentID, String appointmentType)throws ClassNotFoundException, IOException
+	public synchronized boolean bookAppointment(String patientID, String appointmentID, String appointmentType)throws ClassNotFoundException, IOException
 	{
 		String city=appointmentID.substring(0, 3);
 		
@@ -230,7 +230,7 @@ public class QUEServer implements ServerInterface{
 	}
 	
 	
-	public synchronized boolean cancelAppointment(String clientID,String patientID, String appointmentID,String appointmentType)throws ClassNotFoundException, IOException
+	public synchronized boolean cancelAppointment(String patientID, String appointmentID,String appointmentType)throws ClassNotFoundException, IOException
 	{
  		String city=appointmentID.substring(0, 3);
 		

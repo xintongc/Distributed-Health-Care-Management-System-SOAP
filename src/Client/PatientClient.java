@@ -70,7 +70,7 @@ public class PatientClient extends Client implements Runnable{
 				String appointmentType=setAppointmentType();	
 				if(clientID.contains("MTL"))
 				{
-				    result=MTLobj.bookAppointment(clientID,clientID, appointmentID, appointmentType);
+				    result=MTLobj.bookAppointment(clientID, appointmentID, appointmentType);
 					
 					String resultStr=(result==true)?"Success":"Failed";
 					MTLobj.writeTxtClient(clientID,"book Appointment", resultStr);
@@ -78,7 +78,7 @@ public class PatientClient extends Client implements Runnable{
 				}
 				else if(clientID.contains("QUE"))
 				{
-					 result=QUEobj.bookAppointment(clientID,clientID, appointmentID, appointmentType);
+					 result=QUEobj.bookAppointment(clientID, appointmentID, appointmentType);
 					
 					String resultStr=(result==true)?"Success":"Failed";
 					QUEobj.writeTxtClient(clientID,"book Appointment", resultStr);
@@ -86,7 +86,7 @@ public class PatientClient extends Client implements Runnable{
 				}
 				else if(clientID.contains("SHE"))
 				{
-					 result=SHEobj.bookAppointment(clientID,clientID, appointmentID, appointmentType);
+					 result=SHEobj.bookAppointment(clientID, appointmentID, appointmentType);
 
 					String resultStr=(result==true)?"Success":"Failed";
 					SHEobj.writeTxtClient(clientID,"book Appointment", resultStr);
@@ -146,7 +146,7 @@ public class PatientClient extends Client implements Runnable{
 					String appointmentType=setAppointmentType();
 					if(clientID.contains("MTL"))
 					{
-						 result=MTLobj.cancelAppointment(clientID, clientID,appointmentID, appointmentType);
+						 result=MTLobj.cancelAppointment( clientID,appointmentID, appointmentType);
 					
 						String resultStr=(result==true)?"Success":"Failed";
 						MTLobj.writeTxtClient(clientID,"cancel Appointment", resultStr);
@@ -154,7 +154,7 @@ public class PatientClient extends Client implements Runnable{
 					}
 					else if(clientID.contains("QUE"))
 					{
-						 result=QUEobj.cancelAppointment(clientID, clientID,appointmentID, appointmentType);
+						 result=QUEobj.cancelAppointment( clientID,appointmentID, appointmentType);
 						
 						String resultStr=(result==true)?"Success":"Failed";
 						QUEobj.writeTxtClient(clientID,"cancel Appointment", resultStr);
@@ -162,7 +162,7 @@ public class PatientClient extends Client implements Runnable{
 					}
 					else if(clientID.contains("SHE"))
 					{
-						 result=SHEobj.cancelAppointment(clientID, clientID,appointmentID, appointmentType);
+						 result=SHEobj.cancelAppointment( clientID,appointmentID, appointmentType);
 						
 						String resultStr=(result==true)?"Success":"Failed";
 						SHEobj.writeTxtClient(clientID,"cancel Appointment", resultStr);

@@ -71,21 +71,21 @@ public class AdminClient extends Client implements Runnable{
 					String appointmentType=super.setAppointmentType();	
 					if(clientID.contains("MTL"))
 					{
-						 result=MTLobj.bookAppointment(clientID,patientID, appointmentID, appointmentType);
+						 result=MTLobj.bookAppointment(patientID, appointmentID, appointmentType);
 						String resultStr=(result==true)?"Success":"Failed";
 						MTLobj.writeTxtClient(clientID,"book Appointment", resultStr);
 						MTLobj.writeTxtServerMTL(clientID,patientID,appointmentType,appointmentID,"book Appointment", resultStr);
 					}
 					else if(clientID.contains("QUE"))
 					{
-						 result=QUEobj.bookAppointment(clientID,patientID, appointmentID, appointmentType);
+						 result=QUEobj.bookAppointment(patientID, appointmentID, appointmentType);
 						String resultStr=(result==true)?"Success":"Failed";
 						QUEobj.writeTxtClient(clientID,"book Appointment", resultStr);
 						QUEobj.writeTxtServerQUE(clientID,patientID,appointmentType,appointmentID,"book Appointment", resultStr);
 					}
 					else if(clientID.contains("SHE"))
 					{
-						 result=SHEobj.bookAppointment(clientID,patientID, appointmentID, appointmentType);
+						 result=SHEobj.bookAppointment(patientID, appointmentID, appointmentType);
 						String resultStr=(result==true)?"Success":"Failed";
 						SHEobj.writeTxtClient(clientID,"book Appointment", resultStr);
 						SHEobj.writeTxtServerSHE(clientID,patientID,appointmentType,appointmentID,"book Appointment", resultStr);
@@ -147,21 +147,21 @@ public class AdminClient extends Client implements Runnable{
 					String appointmentType=setAppointmentType();
 					if(clientID.contains("MTL"))
 					{
-						 result=MTLobj.cancelAppointment(clientID, patientID,appointmentID, appointmentType);
+						 result=MTLobj.cancelAppointment(patientID,appointmentID, appointmentType);
 						String resultStr=(result==true)?"Success":"Failed";
 						MTLobj.writeTxtClient(clientID,"cancel Appointment", resultStr);
 						MTLobj.writeTxtServerMTL(clientID,patientID,"-","-","cancel Appointment", resultStr);
 					}
 					else if(clientID.contains("QUE"))
 					{
-						 result=QUEobj.cancelAppointment(clientID, patientID,appointmentID, appointmentType);
+						 result=QUEobj.cancelAppointment(patientID,appointmentID, appointmentType);
 						String resultStr=(result==true)?"Success":"Failed";
 						QUEobj.writeTxtClient(clientID,"cancel Appointment", resultStr);
 						QUEobj.writeTxtServerQUE(clientID,patientID,"-","-","cancel Appointment", resultStr);
 					}
 					else if(clientID.contains("SHE"))
 					{
-						 result=SHEobj.cancelAppointment(clientID, patientID,appointmentID, appointmentType);
+						 result=SHEobj.cancelAppointment(patientID,appointmentID, appointmentType);
 						String resultStr=(result==true)?"Success":"Failed";
 						SHEobj.writeTxtClient(clientID,"cancel Appointment", resultStr);
 						SHEobj.writeTxtServerSHE(clientID,patientID,"-","-","cancel Appointment", resultStr);

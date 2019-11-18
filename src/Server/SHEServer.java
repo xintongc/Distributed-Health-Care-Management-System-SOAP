@@ -154,7 +154,7 @@ public class SHEServer implements ServerInterface{
 		map.get(appointmentType).get(appointmentID).set(0, changedStr);		
 	}
 	
-	public synchronized boolean bookAppointment(String clientID,String patientID, String appointmentID, String appointmentType) throws ClassNotFoundException, IOException
+	public synchronized boolean bookAppointment(String patientID, String appointmentID, String appointmentType) throws ClassNotFoundException, IOException
 	{
 		
 		String city=appointmentID.substring(0, 3);
@@ -239,7 +239,7 @@ public class SHEServer implements ServerInterface{
 	}
 	
 	
-	public synchronized boolean cancelAppointment(String clientID,String patientID, String appointmentID,String appointmentType) throws ClassNotFoundException, IOException
+	public synchronized boolean cancelAppointment(String patientID, String appointmentID,String appointmentType) throws ClassNotFoundException, IOException
 	{
 	String city=appointmentID.substring(0, 3);
 		
@@ -452,8 +452,8 @@ public class SHEServer implements ServerInterface{
 							DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
 							socketSer.send(replyPacket);
 							writeTxtServerMTL("-","-","-","-","Send DB", "Success");
-//					outputStream1.close();
-//					os.close();
+//							outputStream1.close();
+//							os.close();
 							socketSer.receive(incomingPacket);
 							writeTxtServerMTL("-","-","-","-","Received DB", "Success");
 							byte[] dataBack = incomingPacket.getData();
@@ -487,87 +487,6 @@ public class SHEServer implements ServerInterface{
 
 		}
 	}
-
-
-	public void createAndListenSocketSer() {
-		try {
-			socketSer = new DatagramSocket(2222);
-
-		while (true) {
-			byte[] incomingData = new byte[1024];
-			DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
-			socketSer.receive(incomingPacket);
-			byte[] data = incomingPacket.getData();
-			ByteArrayInputStream in = new ByteArrayInputStream(data);
-			ObjectInputStream is = new ObjectInputStream(in);
-			String str="";
-			try {
-				Message msg = (Message) is.readObject();
-				str=msg.getMsg();
-				if(str.equalsIgnoreCase("Connect for listing")) {
-					Message msgSend=new Message(SHEMap);
-
-					ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
-					ObjectOutput os = new ObjectOutputStream(outputStream1);
-					os.writeObject(msgSend);
-
-					InetAddress IPAddress = incomingPacket.getAddress();
-					int port = incomingPacket.getPort();
-
-					byte[] dataSend = outputStream1.toByteArray();
-					DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
-					socketSer.send(replyPacket);
-					writeTxtServerMTL("-","-","-","-","Send DB", "Success");
-					outputStream1.close();
-					os.close();
-				}
-				if(str.equalsIgnoreCase("Connect for modifying")) {
-					Message msgSend=new Message(SHEMap);
-
-					ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
-					ObjectOutput os = new ObjectOutputStream(outputStream1);
-					os.writeObject(msgSend);
-
-					InetAddress IPAddress = incomingPacket.getAddress();
-					int port = incomingPacket.getPort();
-
-					byte[] dataSend = outputStream1.toByteArray();
-					DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
-					socketSer.send(replyPacket);
-					writeTxtServerMTL("-","-","-","-","Send DB", "Success");
-//					outputStream1.close();
-//					os.close();
-					socketSer.receive(incomingPacket);
-					writeTxtServerMTL("-","-","-","-","Received DB", "Success");
-					byte[] dataBack = incomingPacket.getData();
-					Message msg1=null;
-					try {
-						msg1 = (Message) is.readObject();
-					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					//return message from server.
-					SHEMap=msg1.getMap();
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-				}
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-
-		} catch (SocketException e) {
-		e.printStackTrace();
-		} catch (IOException i) {
-		i.printStackTrace();
-		}
-		}
 
 
 	private boolean validation(String appointmentType,String patientID,String task, String appointmentID,String clientID,
