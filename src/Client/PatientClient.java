@@ -10,9 +10,9 @@ public class PatientClient extends Client implements Runnable{
 	Map<Integer, String> patientMap = new HashMap<>();
 	public PatientClient()
 	{
-		patientMap.put(1,"MTLP0001");
-		patientMap.put(3,"QUEP0001");
-		patientMap.put(5,"SHEP0001");
+		patientMap.put(1,"MTLP1");
+		patientMap.put(3,"QUEP1");
+		patientMap.put(5,"SHEP1");
 
 	}
 

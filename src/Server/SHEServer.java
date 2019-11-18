@@ -27,7 +27,6 @@ import Client.UDPClient;
 @WebService(endpointInterface = "Server.ServerInterface")
 public class SHEServer implements ServerInterface{
 	DatagramSocket socketSer = null;
-	static SHEServer obj=null;
 
 	static Map<String, Map<String,ArrayList<String>>> SHEMap = new HashMap<String, Map<String,ArrayList<String>>>();
 	Map<String, Map<String,ArrayList<String>>> otherMap1=null;
@@ -35,6 +34,7 @@ public class SHEServer implements ServerInterface{
 	private final int maxCapacity=3;
 	PrintWriter outputTxtClient = null;
 	PrintWriter outputTxtServer = null;
+	Listening listening = new Listening();
 
 	public SHEServer(){
 		super();
@@ -53,16 +53,15 @@ public class SHEServer implements ServerInterface{
 		Map<String,ArrayList<String>> t3=new HashMap<String,ArrayList<String>>();
 		t3.put("SHEA111119",temp3);
 		SHEMap.put("Dental",t3);
+		listening.start();
 	}
 
 
 	public static void main(String args[]) throws Exception
 	{
-		obj = new SHEServer();
-		
+
 		try {
 			System.out.println("SHE Server ready and waiting ...");
-			obj.createAndListenSocketSer();
 		}
 
 		catch (Exception e) {
@@ -352,7 +351,7 @@ public class SHEServer implements ServerInterface{
 	}
 	
 	
-	public void printAppointment(Map<String, Map<String,ArrayList<String>>> map)
+	private void printAppointment(Map<String, Map<String,ArrayList<String>>> map)
 	{
 		for(Map.Entry<String, Map<String,ArrayList<String>>> mtl:map.entrySet())
 		{
@@ -402,12 +401,98 @@ public class SHEServer implements ServerInterface{
 			System.out.println("");
 		}
 	}
-	
+
+	class Listening extends Thread{
+		public DatagramSocket socketSer;
+
+		public void run(){
+
+			try {
+				socketSer = new DatagramSocket(2222);
+
+				while (true) {
+					byte[] incomingData = new byte[1024];
+					DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
+					socketSer.receive(incomingPacket);
+					byte[] data = incomingPacket.getData();
+					ByteArrayInputStream in = new ByteArrayInputStream(data);
+					ObjectInputStream is = new ObjectInputStream(in);
+					String str="";
+					try {
+						Message msg = (Message) is.readObject();
+						str=msg.getMsg();
+						if(str.equalsIgnoreCase("Connect for listing")) {
+							Message msgSend=new Message(SHEMap);
+
+							ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
+							ObjectOutput os = new ObjectOutputStream(outputStream1);
+							os.writeObject(msgSend);
+
+							InetAddress IPAddress = incomingPacket.getAddress();
+							int port = incomingPacket.getPort();
+
+							byte[] dataSend = outputStream1.toByteArray();
+							DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
+							socketSer.send(replyPacket);
+							writeTxtServerMTL("-","-","-","-","Send DB", "Success");
+							outputStream1.close();
+							os.close();
+						}
+						if(str.equalsIgnoreCase("Connect for modifying")) {
+							Message msgSend=new Message(SHEMap);
+
+							ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
+							ObjectOutput os = new ObjectOutputStream(outputStream1);
+							os.writeObject(msgSend);
+
+							InetAddress IPAddress = incomingPacket.getAddress();
+							int port = incomingPacket.getPort();
+
+							byte[] dataSend = outputStream1.toByteArray();
+							DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
+							socketSer.send(replyPacket);
+							writeTxtServerMTL("-","-","-","-","Send DB", "Success");
+//					outputStream1.close();
+//					os.close();
+							socketSer.receive(incomingPacket);
+							writeTxtServerMTL("-","-","-","-","Received DB", "Success");
+							byte[] dataBack = incomingPacket.getData();
+							Message msg1=null;
+							try {
+								msg1 = (Message) is.readObject();
+							} catch (ClassNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							//return message from server.
+							SHEMap=msg1.getMap();
+							try {
+								Thread.sleep(2000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+
+						}
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}
+				}
+
+			} catch (SocketException e) {
+				e.printStackTrace();
+			} catch (IOException i) {
+				i.printStackTrace();
+			}
+
+		}
+	}
+
 
 	public void createAndListenSocketSer() {
 		try {
 			socketSer = new DatagramSocket(2222);
-			
+
 		while (true) {
 			byte[] incomingData = new byte[1024];
 			DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
@@ -425,10 +510,10 @@ public class SHEServer implements ServerInterface{
 					ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
 					ObjectOutput os = new ObjectOutputStream(outputStream1);
 					os.writeObject(msgSend);
-					
+
 					InetAddress IPAddress = incomingPacket.getAddress();
 					int port = incomingPacket.getPort();
-					
+
 					byte[] dataSend = outputStream1.toByteArray();
 					DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
 					socketSer.send(replyPacket);
@@ -442,10 +527,10 @@ public class SHEServer implements ServerInterface{
 					ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
 					ObjectOutput os = new ObjectOutputStream(outputStream1);
 					os.writeObject(msgSend);
-					
+
 					InetAddress IPAddress = incomingPacket.getAddress();
 					int port = incomingPacket.getPort();
-					
+
 					byte[] dataSend = outputStream1.toByteArray();
 					DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
 					socketSer.send(replyPacket);
@@ -470,11 +555,11 @@ public class SHEServer implements ServerInterface{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				
+
 				}
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
-			}		
+			}
 		}
 
 		} catch (SocketException e) {

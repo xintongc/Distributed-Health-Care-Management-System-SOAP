@@ -56,8 +56,8 @@ public class Client extends Thread implements Runnable{
 		admin.outputClientInfo();
 		System.out.println("\nPatient ClientID:");
 		patient.outputClientInfo();
-		System.out.println("Please login with client ID");
-		
+		System.out.println();
+
 
 		String clientID="";
 		while(repeat) {

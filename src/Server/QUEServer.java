@@ -25,7 +25,7 @@ import Client.UDPClient;
 
 @WebService(endpointInterface = "Server.ServerInterface")
 public class QUEServer implements ServerInterface{
-	static QUEServer obj=null;
+
 	DatagramSocket socketSer = null;
 
 	static Map<String, Map<String,ArrayList<String>>> QUEMap = new HashMap<String, Map<String,ArrayList<String>>>();
@@ -34,6 +34,8 @@ public class QUEServer implements ServerInterface{
 	private final int maxCapacity=3;
 	PrintWriter outputTxtClient = null;
 	PrintWriter outputTxtServer = null;
+	Listening listening = new Listening();
+
 
 	public QUEServer(){
 		super();
@@ -52,16 +54,15 @@ public class QUEServer implements ServerInterface{
 		Map<String,ArrayList<String>> t3=new HashMap<String,ArrayList<String>>();
 		t3.put("QUEA101119",temp3);
 		QUEMap.put("Dental",t3);
+		listening.start();
 		
 	}
 
 	public static void main(String args[]) throws Exception
 	{
-		obj = new QUEServer();
 		
 		try {
 			System.out.println("QUE Server ready and waiting ...");
-			obj.createAndListenSocketSer();
 		}
 
 		catch (Exception e) {
@@ -390,83 +391,90 @@ public class QUEServer implements ServerInterface{
 		}
 	}
 
-	public void createAndListenSocketSer() {
-		try {
-			socketSer = new DatagramSocket(3333);
-			
-			while (true) {
-			byte[] incomingData = new byte[1024];
-			DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
-			socketSer.receive(incomingPacket);
-			byte[] data = incomingPacket.getData();
-			ByteArrayInputStream in = new ByteArrayInputStream(data);
-			ObjectInputStream is = new ObjectInputStream(in);
-			String str="";
+	class Listening extends Thread{
+
+		public DatagramSocket socketSer;
+		public void run(){
 			try {
-				Message msg = (Message) is.readObject();
-				str=msg.getMsg();
-				if(str.equalsIgnoreCase("Connect for listing")) {
-					Message msgSend=new Message(QUEMap);
+				socketSer = new DatagramSocket(3333);
 
-					ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
-					ObjectOutput os = new ObjectOutputStream(outputStream1);
-					os.writeObject(msgSend);
-					
-					InetAddress IPAddress = incomingPacket.getAddress();
-					int port = incomingPacket.getPort();
-					
-					byte[] dataSend = outputStream1.toByteArray();
-					DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
-					socketSer.send(replyPacket);
-					writeTxtServerQUE("-","-","-","-","Send DB", "Success");
-					outputStream1.close();
-					os.close();
-					
-				}
-				if(str.equalsIgnoreCase("Connect for modifying")) {
-					Message msgSend=new Message(QUEMap);
-
-					ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
-					ObjectOutput os = new ObjectOutputStream(outputStream1);
-					os.writeObject(msgSend);
-					
-					InetAddress IPAddress = incomingPacket.getAddress();
-					int port = incomingPacket.getPort();
-					
-					byte[] dataSend = outputStream1.toByteArray();
-					DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
-					socketSer.send(replyPacket);
-					writeTxtServerQUE("-","-","-","-","Send DB", "Success");
-					outputStream1.close();
-					os.close();
+				while (true) {
+					byte[] incomingData = new byte[1024];
+					DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
 					socketSer.receive(incomingPacket);
-					writeTxtServerQUE("-","-","-","-","Received DB", "Success");
-					byte[] dataBack = incomingPacket.getData();
-					Message msg1=null;
+					byte[] data = incomingPacket.getData();
+					ByteArrayInputStream in = new ByteArrayInputStream(data);
+					ObjectInputStream is = new ObjectInputStream(in);
+					String str="";
 					try {
-						msg1 = (Message) is.readObject();
+						Message msg = (Message) is.readObject();
+						str=msg.getMsg();
+						if(str.equalsIgnoreCase("Connect for listing")) {
+							Message msgSend=new Message(QUEMap);
+
+							ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
+							ObjectOutput os = new ObjectOutputStream(outputStream1);
+							os.writeObject(msgSend);
+
+							InetAddress IPAddress = incomingPacket.getAddress();
+							int port = incomingPacket.getPort();
+
+							byte[] dataSend = outputStream1.toByteArray();
+							DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
+							socketSer.send(replyPacket);
+							writeTxtServerQUE("-","-","-","-","Send DB", "Success");
+							outputStream1.close();
+							os.close();
+
+						}
+						if(str.equalsIgnoreCase("Connect for modifying")) {
+							Message msgSend=new Message(QUEMap);
+
+							ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
+							ObjectOutput os = new ObjectOutputStream(outputStream1);
+							os.writeObject(msgSend);
+
+							InetAddress IPAddress = incomingPacket.getAddress();
+							int port = incomingPacket.getPort();
+
+							byte[] dataSend = outputStream1.toByteArray();
+							DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
+							socketSer.send(replyPacket);
+							writeTxtServerQUE("-","-","-","-","Send DB", "Success");
+							outputStream1.close();
+							os.close();
+							socketSer.receive(incomingPacket);
+							writeTxtServerQUE("-","-","-","-","Received DB", "Success");
+							byte[] dataBack = incomingPacket.getData();
+							Message msg1=null;
+							try {
+								msg1 = (Message) is.readObject();
+							} catch (ClassNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							//return message from server.
+							QUEMap=msg1.getMap();
+							in.close();
+							is.close();
+
+
+						}
 					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					//return message from server.
-					QUEMap=msg1.getMap();
-					in.close();
-					is.close();
-					
-					
 				}
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}		
-		}
 
-		} catch (SocketException e) {
-		e.printStackTrace();
-		} catch (IOException i) {
-		i.printStackTrace();
+			} catch (SocketException e) {
+				e.printStackTrace();
+			} catch (IOException i) {
+				i.printStackTrace();
+			}
+
+
 		}
-		}
+	}
+
 
 	private boolean validation(String appointmentType,String patientID,String task, String appointmentID,String clientID,
 			Map<String, Map<String,ArrayList<String>>> otherMapA,Map<String, Map<String,ArrayList<String>>> otherMapB,

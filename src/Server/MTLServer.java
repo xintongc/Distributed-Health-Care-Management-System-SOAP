@@ -26,8 +26,8 @@ import Client.UDPClient;
 
 @WebService(endpointInterface = "Server.ServerInterface")
 public class MTLServer implements ServerInterface{
-	static MTLServer obj=null;
-	DatagramSocket socketSer = null;
+//	static MTLServer obj=null;
+
 
 	static Map<String, Map<String,ArrayList<String>>> MTLMap = new HashMap<String, Map<String,ArrayList<String>>>();
 	Map<String, Map<String,ArrayList<String>>> otherMap1=null;
@@ -35,6 +35,7 @@ public class MTLServer implements ServerInterface{
 	private final int maxCapacity=3;
 	PrintWriter outputTxtClient = null;
 	PrintWriter outputTxtServer = null;
+	Listening listening = new Listening();
 
 	public MTLServer(){
 		super();
@@ -53,15 +54,14 @@ public class MTLServer implements ServerInterface{
 		Map<String,ArrayList<String>> t3=new HashMap<String,ArrayList<String>>();
 		t3.put("MTLA111111",temp3);
 		MTLMap.put("Dental",t3);
+		listening.start();
 	}
 
 	public static void main(String args[]) throws Exception
 	{
-		obj = new MTLServer();
-		
+
 		try {
 			System.out.println("MTL Server ready and waiting ...");
-			obj.createAndListenSocketSer();
 		}
 
 		catch (Exception e) {
@@ -398,90 +398,110 @@ public class MTLServer implements ServerInterface{
 			System.out.println("");
 		}
 	}
-	
-	public void createAndListenSocketSer() {
-		try {
-			socketSer = new DatagramSocket(1111);
-			
-		while (true) {
-			byte[] incomingData = new byte[1024];
-			DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
-			socketSer.receive(incomingPacket);
-			byte[] data = incomingPacket.getData();
-			ByteArrayInputStream in = new ByteArrayInputStream(data);
-			ObjectInputStream is = new ObjectInputStream(in);
-			String str="";
+
+	class Listening extends Thread{
+//		public Thread t;
+		public DatagramSocket socketSer;
+
+//		public Listening(DatagramSocket socketSer){
+//			this.socketSer = socketSer;
+//		}
+
+		public void run(){
+
 			try {
-				Message msg = (Message) is.readObject();
-				str=msg.getMsg();
-				if(str.equalsIgnoreCase("Connect for listing")) {
-					Message msgSend=new Message(MTLMap);
+				socketSer = new DatagramSocket(1111);
 
-					ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
-					ObjectOutput os = new ObjectOutputStream(outputStream1);
-					os.writeObject(msgSend);
-					
-					InetAddress IPAddress = incomingPacket.getAddress();
-					int port = incomingPacket.getPort();
-					
-					byte[] dataSend = outputStream1.toByteArray();
-					DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
-					socketSer.send(replyPacket);
-					writeTxtServerMTL("-","-","-","-","Send DB", "Success");
-					outputStream1.close();
-					os.close();
-				}
-				if(str.equalsIgnoreCase("Connect for modifying")) {
-					Message msgSend=new Message(MTLMap);
-
-					ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
-					ObjectOutput os = new ObjectOutputStream(outputStream1);
-					os.writeObject(msgSend);
-					
-					InetAddress IPAddress = incomingPacket.getAddress();
-					int port = incomingPacket.getPort();
-					
-					byte[] dataSend = outputStream1.toByteArray();
-					DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
-					socketSer.send(replyPacket);
-					writeTxtServerMTL("-","-","-","-","Send DB", "Success");
-
+				while (true) {
+					byte[] incomingData = new byte[1024];
+					DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
 					socketSer.receive(incomingPacket);
-					writeTxtServerMTL("-","-","-","-","Received DB", "Success");
-					byte[] dataBack = incomingPacket.getData();
+					byte[] data = incomingPacket.getData();
+					ByteArrayInputStream in = new ByteArrayInputStream(data);
+					ObjectInputStream is = new ObjectInputStream(in);
+					String str="";
+					try {
+						Message msg = (Message) is.readObject();
+						str=msg.getMsg();
+						if(str.equalsIgnoreCase("Connect for listing")) {
+							Message msgSend=new Message(MTLMap);
+
+							ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
+							ObjectOutput os = new ObjectOutputStream(outputStream1);
+							os.writeObject(msgSend);
+
+							InetAddress IPAddress = incomingPacket.getAddress();
+							int port = incomingPacket.getPort();
+
+							byte[] dataSend = outputStream1.toByteArray();
+							DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
+							socketSer.send(replyPacket);
+//					writeTxtServerMTL("-","-","-","-","Send DB", "Success");
+							outputStream1.close();
+							os.close();
+						}
+						if(str.equalsIgnoreCase("Connect for modifying")) {
+							Message msgSend=new Message(MTLMap);
+
+							ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
+							ObjectOutput os = new ObjectOutputStream(outputStream1);
+							os.writeObject(msgSend);
+
+							InetAddress IPAddress = incomingPacket.getAddress();
+							int port = incomingPacket.getPort();
+
+							byte[] dataSend = outputStream1.toByteArray();
+							DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
+							socketSer.send(replyPacket);
+//					writeTxtServerMTL("-","-","-","-","Send DB", "Success");
+
+							socketSer.receive(incomingPacket);
+//					writeTxtServerMTL("-","-","-","-","Received DB", "Success");
+							byte[] dataBack = incomingPacket.getData();
 
 
-					Message msg1=null;
-					try {
-						msg1 = (Message) is.readObject();
-					} catch (ClassNotFoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					//return message from server.
-					MTLMap=msg1.getMap();
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+							Message msg1=null;
+							try {
+								msg1 = (Message) is.readObject();
+							} catch (ClassNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							//return message from server.
+							MTLMap=msg1.getMap();
+							try {
+								Thread.sleep(2000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 
 //					Message message = (Message) BytesUtil.toObject(dataBack);
 //					MTLMap = message.getMap();
-				
+
+						}
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}
 				}
-			} catch (ClassNotFoundException e) {
+
+			} catch (SocketException e) {
 				e.printStackTrace();
-			}		
+			} catch (IOException i) {
+				i.printStackTrace();
+			}
+
+
 		}
 
-		} catch (SocketException e) {
-		e.printStackTrace();
-		} catch (IOException i) {
-		i.printStackTrace();
-		}
-		}
+//		public void start(){
+//			if(t == null){
+//				t = new Thread(this);
+//				t.start();
+//			}
+//		}
+	}
+
 
 	
 	private boolean validation(String appointmentType,String patientID,String task, String appointmentID,String clientID,

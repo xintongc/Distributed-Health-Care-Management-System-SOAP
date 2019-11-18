@@ -11,7 +11,7 @@ public class AdminClient extends Client implements Runnable{
 	
 	public AdminClient()
 	{
-		adminMap.put(1,"MTLA0001");adminMap.put(2,"QUEA0001");adminMap.put(3,"SHEA0001");
+		adminMap.put(1,"MTLA1");adminMap.put(2,"QUEA1");adminMap.put(3,"SHEA1");
 	}
 
 	public void adminStart(String clientID) throws Exception
