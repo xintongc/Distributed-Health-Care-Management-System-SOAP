@@ -97,7 +97,7 @@ public class UDPClient {
         return message;
     }
     
-    public synchronized static boolean book(int port, String clientID,String patientID, String appointmentID, String appointmentType) throws ClassNotFoundException, IOException{
+    public synchronized static boolean book(int port,String patientID, String appointmentID, String appointmentType) throws ClassNotFoundException, IOException{
     	DatagramSocket SocketCli=null;
     	InetAddress IPAddress = null;
     	byte[] incomingData = null;
@@ -161,7 +161,7 @@ public class UDPClient {
     	return true;
     }
     
-    public synchronized static boolean cancel(int port, String clientID, String patientID, String appointmentID, String appointmentType) throws ClassNotFoundException, IOException{
+    public synchronized static boolean cancel(int port, String patientID, String appointmentID, String appointmentType) throws ClassNotFoundException, IOException{
     	DatagramSocket SocketCli=null;
     	InetAddress IPAddress = null;
     	byte[] incomingData = null;

@@ -155,13 +155,13 @@ public class QUEServer implements ServerInterface{
 		
 		switch(city) {
 			case "MTL": {
-				UDPClient.book(1111, clientID,patientID, appointmentID, appointmentType);	
+				UDPClient.book(1111,patientID, appointmentID, appointmentType);
 			}break;
 			case "QUE":{
 				bookInMap(QUEMap, patientID, appointmentID, appointmentType);
 			}break;
 			case "SHE":{
-				UDPClient.book(2222, clientID, patientID, appointmentID, appointmentType);
+				UDPClient.book(2222, patientID, appointmentID, appointmentType);
 			}
 		}
 		
@@ -237,13 +237,13 @@ public class QUEServer implements ServerInterface{
 		switch(city) {
 			case "MTL": {
 				
-				UDPClient.cancel(1111, clientID, patientID, appointmentID, appointmentType);
+				UDPClient.cancel(1111, patientID, appointmentID, appointmentType);
 			}break;
 			case "QUE":{
 				cancelInMap(QUEMap, patientID, appointmentID, appointmentType);	
 			}break;
 			case "SHE":{
-				UDPClient.cancel(2222, clientID, patientID, appointmentID, appointmentType);
+				UDPClient.cancel(2222, patientID, appointmentID, appointmentType);
 			}
 		}
 		
@@ -306,7 +306,7 @@ public class QUEServer implements ServerInterface{
 		  switch(cityNew) {
 		  case "MTL":
 		  {
-			  UDPClient.book(1111, clientID, patientID, newAppointmentID, newAppointmentType);
+			  UDPClient.book(1111, patientID, newAppointmentID, newAppointmentType);
 		  }break;
 		  case "QUE":
 		  {
@@ -316,7 +316,7 @@ public class QUEServer implements ServerInterface{
 		  }break;
 		  case "SHE":
 		  {
-		    UDPClient.book(2222, clientID, patientID, newAppointmentID, newAppointmentType);
+		    UDPClient.book(2222, patientID, newAppointmentID, newAppointmentType);
 
 		  }break;
 		}
@@ -324,7 +324,7 @@ public class QUEServer implements ServerInterface{
 
 		  case "MTL":
 		  {
-			  UDPClient.cancel(1111, clientID, patientID, oldAppointmentID, oldAppointmentType);
+			  UDPClient.cancel(1111, patientID, oldAppointmentID, oldAppointmentType);
 		  }break;
 		  case "QUE":
 		  {
@@ -333,7 +333,7 @@ public class QUEServer implements ServerInterface{
 		  }break;
 		  case "SHE":
 		  {
-		    UDPClient.cancel(2222, clientID, patientID, oldAppointmentID, oldAppointmentType);
+		    UDPClient.cancel(2222, patientID, oldAppointmentID, oldAppointmentType);
 		  }break;
 		}
 

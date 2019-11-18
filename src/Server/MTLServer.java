@@ -26,8 +26,6 @@ import Client.UDPClient;
 
 @WebService(endpointInterface = "Server.ServerInterface")
 public class MTLServer implements ServerInterface{
-//	static MTLServer obj=null;
-
 
 	static Map<String, Map<String,ArrayList<String>>> MTLMap = new HashMap<String, Map<String,ArrayList<String>>>();
 	Map<String, Map<String,ArrayList<String>>> otherMap1=null;
@@ -163,10 +161,10 @@ public class MTLServer implements ServerInterface{
 				bookInMap(MTLMap, patientID, appointmentID, appointmentType);	
 			}break;
 			case "QUE":{
-				UDPClient.book(3333, clientID, patientID, appointmentID, appointmentType);
+				UDPClient.book(3333, patientID, appointmentID, appointmentType);
 			}break;
 			case "SHE":{
-				UDPClient.book(2222, clientID, patientID, appointmentID, appointmentType);
+				UDPClient.book(2222, patientID, appointmentID, appointmentType);
 			}
 		}
 		
@@ -246,10 +244,10 @@ public class MTLServer implements ServerInterface{
 				cancelInMap(MTLMap, patientID, appointmentID, appointmentType);	
 			}break;
 			case "QUE":{
-				UDPClient.cancel(3333, clientID, patientID, appointmentID, appointmentType);
+				UDPClient.cancel(3333, patientID, appointmentID, appointmentType);
 			}break;
 			case "SHE":{
-				UDPClient.cancel(2222, clientID, patientID, appointmentID, appointmentType);
+				UDPClient.cancel(2222, patientID, appointmentID, appointmentType);
 			}
 		}
 		
@@ -318,12 +316,12 @@ public class MTLServer implements ServerInterface{
 		  }break;
 		  case "QUE":
 		  {
-		    UDPClient.book(3333, clientID, patientID, newAppointmentID, newAppointmentType);
+		    UDPClient.book(3333, patientID, newAppointmentID, newAppointmentType);
 
 		  }break;
 		  case "SHE":
 		  {
-		    UDPClient.book(2222, clientID, patientID, newAppointmentID, newAppointmentType);
+		    UDPClient.book(2222, patientID, newAppointmentID, newAppointmentType);
 
 		  }break;
 		}
@@ -335,11 +333,11 @@ public class MTLServer implements ServerInterface{
 		  }break;
 		  case "QUE":
 		  {
-		    UDPClient.cancel(3333, clientID, patientID, oldAppointmentID, oldAppointmentType);
+		    UDPClient.cancel(3333, patientID, oldAppointmentID, oldAppointmentType);
 		  }break;
 		  case "SHE":
 		  {
-		    UDPClient.cancel(2222, clientID, patientID, oldAppointmentID, oldAppointmentType);
+		    UDPClient.cancel(2222, patientID, oldAppointmentID, oldAppointmentType);
 		  }break;
 		}
 

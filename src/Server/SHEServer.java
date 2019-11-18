@@ -162,10 +162,10 @@ public class SHEServer implements ServerInterface{
 		switch(city) {
 			case "MTL": {
 				
-				UDPClient.book(1111, clientID, patientID, appointmentID, appointmentType);
+				UDPClient.book(1111, patientID, appointmentID, appointmentType);
 			}break;
 			case "QUE":{
-				UDPClient.book(3333, clientID, patientID, appointmentID, appointmentType);
+				UDPClient.book(3333, patientID, appointmentID, appointmentType);
 			}break;
 			case "SHE":{
 				bookInMap(SHEMap, patientID, appointmentID, appointmentType);	
@@ -245,10 +245,10 @@ public class SHEServer implements ServerInterface{
 		
 		switch(city) {
 			case "MTL": {
-				UDPClient.cancel(1111, clientID, patientID, appointmentID, appointmentType);
+				UDPClient.cancel(1111, patientID, appointmentID, appointmentType);
 			}break;
 			case "QUE":{
-				UDPClient.cancel(3333, clientID, patientID, appointmentID, appointmentType);
+				UDPClient.cancel(3333, patientID, appointmentID, appointmentType);
 			}break;
 			case "SHE":{				
 				cancelInMap(SHEMap, patientID, appointmentID, appointmentType);	
@@ -316,11 +316,11 @@ public class SHEServer implements ServerInterface{
 		  switch(cityNew) {
 		  case "MTL":
 		  {
-			  UDPClient.book(1111, clientID, patientID, newAppointmentID, newAppointmentType);
+			  UDPClient.book(1111, patientID, newAppointmentID, newAppointmentType);
 		  }break;
 		  case "QUE":
 		  {
-		    UDPClient.book(3333, clientID, patientID, newAppointmentID, newAppointmentType);
+		    UDPClient.book(3333, patientID, newAppointmentID, newAppointmentType);
 
 		  }break;
 		  case "SHE":
@@ -334,11 +334,11 @@ public class SHEServer implements ServerInterface{
 
 		  case "MTL":
 		  {
-			  UDPClient.cancel(1111, clientID, patientID, oldAppointmentID, oldAppointmentType);
+			  UDPClient.cancel(1111, patientID, oldAppointmentID, oldAppointmentType);
 		  }break;
 		  case "QUE":
 		  {
-		    UDPClient.cancel(3333, clientID, patientID, oldAppointmentID, oldAppointmentType);
+		    UDPClient.cancel(3333, patientID, oldAppointmentID, oldAppointmentType);
 		  }break;
 		  case "SHE":
 		  {
