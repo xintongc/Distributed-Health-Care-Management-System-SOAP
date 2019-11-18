@@ -189,21 +189,21 @@ public class AdminClient extends Client implements Runnable{
 					String newAppointmentType=setAppointmentType();
 					if(clientID.contains("MTL"))
 					{
-						 resultSwap=MTLobj.swapAppointment(clientID, patientID,oldAppointmentID, oldAppointmentType,newAppointmentID, newAppointmentType);
+						 resultSwap=MTLobj.swapAppointment(patientID,oldAppointmentID, oldAppointmentType,newAppointmentID, newAppointmentType);
 						String resultStr=(resultSwap==true)?"Success":"Failed";
 						MTLobj.writeTxtClient(clientID,"swap Appointment", resultStr);
 						MTLobj.writeTxtServerMTL(clientID,patientID,"-","-","swap Appointment", resultStr);
 					}
 					else if(clientID.contains("QUE"))
 					{
-						 resultSwap=QUEobj.swapAppointment(clientID, patientID,oldAppointmentID, oldAppointmentType,newAppointmentID, newAppointmentType);
+						 resultSwap=QUEobj.swapAppointment(patientID,oldAppointmentID, oldAppointmentType,newAppointmentID, newAppointmentType);
 						String resultStr=(resultSwap==true)?"Success":"Failed";
 						QUEobj.writeTxtClient(clientID,"swap Appointment", resultStr);
 						QUEobj.writeTxtServerQUE(clientID,patientID,"-","-","swap Appointment", resultStr);
 					}
 					else if(clientID.contains("SHE"))
 					{
-						 resultSwap=SHEobj.swapAppointment(clientID, patientID,oldAppointmentID, oldAppointmentType,newAppointmentID, newAppointmentType);
+						 resultSwap=SHEobj.swapAppointment(patientID,oldAppointmentID, oldAppointmentType,newAppointmentID, newAppointmentType);
 						String resultStr=(resultSwap==true)?"Success":"Failed";
 						SHEobj.writeTxtClient(clientID,"swap Appointment", resultStr);
 						SHEobj.writeTxtServerSHE(clientID,patientID,"-","-","swap Appointment", resultStr);

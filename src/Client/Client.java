@@ -196,7 +196,7 @@ public class Client extends Thread implements Runnable{
 	@Override
 	public void run() {
 		try {
-			MTLobj.swapAppointment(clientID, patientID, oldAppointmentID, oldAppointmentType, newAppointmentID, newAppointmentType);
+			MTLobj.swapAppointment(patientID, oldAppointmentID, oldAppointmentType, newAppointmentID, newAppointmentType);
 		} catch (ClassNotFoundException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

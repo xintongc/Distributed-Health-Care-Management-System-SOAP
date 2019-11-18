@@ -283,7 +283,7 @@ public class MTLServer implements ServerInterface{
 	
 	
 	
-	public synchronized boolean swapAppointment(String clientID, String patientID,String oldAppointmentID, String oldAppointmentType,String newAppointmentID, String newAppointmentType) throws ClassNotFoundException, IOException {
+	public synchronized boolean swapAppointment(String patientID,String oldAppointmentID, String oldAppointmentType,String newAppointmentID, String newAppointmentType) throws ClassNotFoundException, IOException {
 
 		  Message msg1 = null;
 		  try {
