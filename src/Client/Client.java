@@ -10,12 +10,11 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
 public class Client extends Thread implements Runnable{
-	static String clientID;
-	static String patientID;
-	static String oldAppointmentID;
-	static String oldAppointmentType;
-	static String newAppointmentID;
-	static String newAppointmentType;
+	String patientID;
+	String oldAppointmentID;
+	String oldAppointmentType;
+	String newAppointmentID;
+	String newAppointmentType;
 
 	ServerInterface MTLobj;
 	ServerInterface QUEobj;
@@ -114,14 +113,14 @@ public class Client extends Thread implements Runnable{
 		}
 		return appointmentType;
 	}
-	public int setAppointmentWeek()
-	{
-		System.out.println("Please enter the appointment week");
-		int input=0;
-		Scanner keyboard=new Scanner(System.in);
-		input=keyboard.nextInt();
-		return input;
-	}
+//	public int setAppointmentWeek()
+//	{
+//		System.out.println("Please enter the appointment week");
+//		int input=0;
+//		Scanner keyboard=new Scanner(System.in);
+//		input=keyboard.nextInt();
+//		return input;
+//	}
 	public int setCapacity()
 	{
 		System.out.println("Please enter the capacity you want(should be less than the maximum capacity:3)");

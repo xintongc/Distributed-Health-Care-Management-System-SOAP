@@ -19,7 +19,7 @@ public interface ServerInterface{
 	@WebMethod
 	boolean swapAppointment (String patientID, String oldAppointmentID, String oldAppointmentType, String newAppointmentID, String newAppointmentType) throws ClassNotFoundException, IOException;
 	@WebMethod
-	boolean addAppointment (String appointmentID, String appointmentType, String capacity, String appointmentWeekStr);
+	boolean addAppointment (String appointmentID, String appointmentType, String capacity);
 	@WebMethod
 	boolean checkAppointmentExisted (String appointmentID, String appointmentType);
 	@WebMethod

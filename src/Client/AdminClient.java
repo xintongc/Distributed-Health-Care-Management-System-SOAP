@@ -237,8 +237,8 @@ public class AdminClient extends Client implements Runnable{
 					do {
 						appointmentID=setAppointmentID();
 						appointmentType=setAppointmentType();
-						appointmentWeekInt=setAppointmentWeek();
-						appointmentWeekStr=appointmentWeekInt+"";
+//						appointmentWeekInt=setAppointmentWeek();
+//						appointmentWeekStr=appointmentWeekInt+"";
 						if(MTLobj.checkAppointmentExisted(appointmentID,appointmentType)) {
 							System.out.println("The appointment you entered exists in MTL Database. Please enter another one.");
 							doLoop=true;
@@ -246,7 +246,7 @@ public class AdminClient extends Client implements Runnable{
 							doLoop=false;
 						}
 					}while(doLoop);
-					 result=MTLobj.addAppointment(appointmentID,appointmentType,capacityStr,appointmentWeekStr);
+					 result=MTLobj.addAppointment(appointmentID,appointmentType,capacityStr);
 					String resultStr=(MTLobj.checkAppointmentExisted(appointmentID,appointmentType)==true)?"Success":"Failed";
 					MTLobj.writeTxtClient(clientID,"add Appointment", resultStr);
 					MTLobj.writeTxtServerMTL(clientID,clientID,"-","-","add Appointment", resultStr);
@@ -256,8 +256,8 @@ public class AdminClient extends Client implements Runnable{
 					do {
 						appointmentID=setAppointmentID();
 						appointmentType=setAppointmentType();
-						appointmentWeekInt=setAppointmentWeek();
-						appointmentWeekStr=appointmentWeekInt+"";
+//						appointmentWeekInt=setAppointmentWeek();
+//						appointmentWeekStr=appointmentWeekInt+"";
 						if(QUEobj.checkAppointmentExisted(appointmentID,appointmentType)) {
 							System.out.println("The appointment you entered exists in MTL Database. Please enter another one.");
 							doLoop=true;
@@ -265,7 +265,7 @@ public class AdminClient extends Client implements Runnable{
 							doLoop=false;
 						}
 					}while(doLoop);
-					 result=QUEobj.addAppointment(appointmentID,appointmentType,capacityStr,appointmentWeekStr);
+					 result=QUEobj.addAppointment(appointmentID,appointmentType,capacityStr);
 					String resultStr=(QUEobj.checkAppointmentExisted(appointmentID,appointmentType)==true)?"Success":"Failed";
 					QUEobj.writeTxtClient(clientID,"add Appointment", resultStr);
 					QUEobj.writeTxtServerQUE(clientID,clientID,"-","-","add Appointment", resultStr);
@@ -275,8 +275,8 @@ public class AdminClient extends Client implements Runnable{
 					do {
 						appointmentID=setAppointmentID();
 						appointmentType=setAppointmentType();
-						appointmentWeekInt=setAppointmentWeek();
-						appointmentWeekStr=appointmentWeekInt+"";
+//						appointmentWeekInt=setAppointmentWeek();
+//						appointmentWeekStr=appointmentWeekInt+"";
 						if(SHEobj.checkAppointmentExisted(appointmentID,appointmentType)) {
 							System.out.println("The appointment you entered exists in MTL Database. Please enter another one.");
 							doLoop=true;
@@ -284,7 +284,7 @@ public class AdminClient extends Client implements Runnable{
 							doLoop=false;
 						}
 					}while(doLoop);
-					 result=SHEobj.addAppointment(appointmentID,appointmentType,capacityStr,appointmentWeekStr);
+					 result=SHEobj.addAppointment(appointmentID,appointmentType,capacityStr);
 					String resultStr=(SHEobj.checkAppointmentExisted(appointmentID,appointmentType)==true)?"Success":"Failed";
 					SHEobj.writeTxtClient(clientID,"add Appointment", resultStr);
 					SHEobj.writeTxtServerSHE(clientID,clientID,"-","-","add Appointment", resultStr);

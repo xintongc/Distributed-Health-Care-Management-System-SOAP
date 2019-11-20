@@ -27,7 +27,7 @@ import Client.UDPClient;
 @WebService(endpointInterface = "Server.ServerInterface")
 public class MTLServer implements ServerInterface{
 
-	static Map<String, Map<String,ArrayList<String>>> MTLMap = new HashMap<String, Map<String,ArrayList<String>>>();
+	Map<String, Map<String,ArrayList<String>>> MTLMap = new HashMap<String, Map<String,ArrayList<String>>>();
 	Map<String, Map<String,ArrayList<String>>> otherMap1=null;
 	Map<String, Map<String,ArrayList<String>>> otherMap2=null;
 	private final int maxCapacity=3;
@@ -40,9 +40,9 @@ public class MTLServer implements ServerInterface{
 		ArrayList<String> temp1=new ArrayList<String>();
 		ArrayList<String> temp2=new ArrayList<String>();
 		ArrayList<String> temp3=new ArrayList<String>();
-		temp1.add("3");temp1.add("2");
-		temp2.add("3");temp2.add("2");
-		temp3.add("3");temp3.add("2");
+		temp1.add("3");
+		temp2.add("3");
+		temp3.add("3");
 		Map<String,ArrayList<String>> t1=new HashMap<String,ArrayList<String>>();
 		t1.put("MTLE111111",temp1);
 		MTLMap.put("Physician",t1);
@@ -70,12 +70,21 @@ public class MTLServer implements ServerInterface{
 		System.out.println("MTLServer Exiting ...");
 		System.out.println("Server is Up & Running");
 	}
-	
-	public synchronized boolean addAppointment(String appointmentID, String appointmentType, String strCapacity,String appointmentWeekStr)
+
+	public Map<String, Map<String,ArrayList<String>>> getMap(){
+		return MTLMap;
+	}
+
+	public void setMap(Map<String, Map<String,ArrayList<String>>> map){
+		Map<String, Map<String,ArrayList<String>>> MTLMap = map;
+	}
+
+	public synchronized boolean addAppointment(String appointmentID, String appointmentType, String strCapacity)
 	{
 		ArrayList<String> subValue=new ArrayList<String>();
 		//String strCapacity=String.valueOf(capacity);
-		subValue.add(strCapacity);subValue.add(appointmentWeekStr);
+		subValue.add(strCapacity);
+//		subValue.add(appointmentWeekStr);
 		String cityName=appointmentID.substring(0, 3);
 //		Map<String,ArrayList<String>> subMap = new HashMap<String,ArrayList<String>>();
 //		subMap.put(appointmentID, subValue);

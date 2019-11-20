@@ -26,9 +26,8 @@ import Client.UDPClient;
 
 @WebService(endpointInterface = "Server.ServerInterface")
 public class SHEServer implements ServerInterface{
-	DatagramSocket socketSer = null;
 
-	static Map<String, Map<String,ArrayList<String>>> SHEMap = new HashMap<String, Map<String,ArrayList<String>>>();
+	Map<String, Map<String,ArrayList<String>>> SHEMap = new HashMap<String, Map<String,ArrayList<String>>>();
 	Map<String, Map<String,ArrayList<String>>> otherMap1=null;
 	Map<String, Map<String,ArrayList<String>>> otherMap2=null;
 	private final int maxCapacity=3;
@@ -41,9 +40,9 @@ public class SHEServer implements ServerInterface{
 		ArrayList<String> temp1=new ArrayList<String>();	
 		ArrayList<String> temp2=new ArrayList<String>();	
 		ArrayList<String> temp3=new ArrayList<String>();
-		temp1.add("1");temp1.add("2");
-		temp2.add("2");temp2.add("2");
-		temp3.add("1");temp3.add("2");
+		temp1.add("1");
+		temp2.add("2");
+		temp3.add("1");
 		Map<String,ArrayList<String>> t1=new HashMap<String,ArrayList<String>>();
 		t1.put("SHEA101119",temp1);
 		SHEMap.put("Physician",t1);
@@ -74,12 +73,20 @@ public class SHEServer implements ServerInterface{
 		
 	}
 
-	
-	public synchronized boolean addAppointment(String appointmentID, String appointmentType, String strCapacity,String appointmentWeekStr)
+	public Map<String, Map<String,ArrayList<String>>> getMap(){
+		return SHEMap;
+	}
+
+	public void setMap(Map<String, Map<String,ArrayList<String>>> map){
+		Map<String, Map<String,ArrayList<String>>> SHEMap = map;
+	}
+
+	public synchronized boolean addAppointment(String appointmentID, String appointmentType, String strCapacity)
 	{
 		ArrayList<String> subValue=new ArrayList<String>();
 		//String strCapacity=String.valueOf(capacity);
-		subValue.add(strCapacity);subValue.add(appointmentWeekStr);
+		subValue.add(strCapacity);
+//		subValue.add(appointmentWeekStr);
 		String cityName=appointmentID.substring(0, 3);
 		if(cityName.equalsIgnoreCase("SHE")) {
 			SHEMap.get(appointmentType).put(appointmentID, subValue);
