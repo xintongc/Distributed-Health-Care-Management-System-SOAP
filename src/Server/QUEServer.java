@@ -26,7 +26,7 @@ import Client.UDPClient;
 @WebService(endpointInterface = "Server.ServerInterface")
 public class QUEServer implements ServerInterface{
 
-	Map<String, Map<String,ArrayList<String>>> QUEMap = new HashMap<String, Map<String,ArrayList<String>>>();
+	static Map<String, Map<String,ArrayList<String>>> QUEMap = new HashMap<String, Map<String,ArrayList<String>>>();
 	Map<String, Map<String,ArrayList<String>>> otherMap1=null;
 	Map<String, Map<String,ArrayList<String>>> otherMap2=null;
 	private final int maxCapacity=3;
@@ -73,11 +73,11 @@ public class QUEServer implements ServerInterface{
 		
 	}
 
-	public Map<String, Map<String,ArrayList<String>>> getMap(){
+	public static Map<String, Map<String,ArrayList<String>>> getMap(){
 		return QUEMap;
 	}
 
-	public void setMap(Map<String, Map<String,ArrayList<String>>> map){
+	public static void setMap(Map<String, Map<String,ArrayList<String>>> map){
 		Map<String, Map<String,ArrayList<String>>> QUEMap = map;
 	}
 

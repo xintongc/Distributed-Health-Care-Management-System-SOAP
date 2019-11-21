@@ -27,7 +27,7 @@ import Client.UDPClient;
 @WebService(endpointInterface = "Server.ServerInterface")
 public class SHEServer implements ServerInterface{
 
-	Map<String, Map<String,ArrayList<String>>> SHEMap = new HashMap<String, Map<String,ArrayList<String>>>();
+	static Map<String, Map<String,ArrayList<String>>> SHEMap = new HashMap<String, Map<String,ArrayList<String>>>();
 	Map<String, Map<String,ArrayList<String>>> otherMap1=null;
 	Map<String, Map<String,ArrayList<String>>> otherMap2=null;
 	private final int maxCapacity=3;
@@ -73,11 +73,11 @@ public class SHEServer implements ServerInterface{
 		
 	}
 
-	public Map<String, Map<String,ArrayList<String>>> getMap(){
+	public static Map<String, Map<String,ArrayList<String>>> getMap(){
 		return SHEMap;
 	}
 
-	public void setMap(Map<String, Map<String,ArrayList<String>>> map){
+	public static void setMap(Map<String, Map<String,ArrayList<String>>> map){
 		Map<String, Map<String,ArrayList<String>>> SHEMap = map;
 	}
 
