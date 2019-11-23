@@ -24,7 +24,7 @@ import Client.UDPClient;
 
 
 
-@WebService(endpointInterface = "Server.ServerInterface")
+//@WebService(endpointInterface = "Server.ServerInterface")
 public class SHEServer implements ServerInterface{
 
 	static Map<String, Map<String,ArrayList<String>>> SHEMap = new HashMap<String, Map<String,ArrayList<String>>>();
@@ -34,6 +34,8 @@ public class SHEServer implements ServerInterface{
 	PrintWriter outputTxtClient = null;
 	PrintWriter outputTxtServer = null;
 	Listening listening = new Listening();
+	public HashMap<String, String> adminUsers = new HashMap<String, String>();
+	private String adminID;
 
 	public SHEServer(){
 		super();
@@ -56,22 +58,31 @@ public class SHEServer implements ServerInterface{
 	}
 
 
-	public static void main(String args[]) throws Exception
-	{
+//	public static void main(String args[]) throws Exception
+//	{
+//
+//		try {
+//			System.out.println("SHE Server ready and waiting ...");
+//		}
+//
+//		catch (Exception e) {
+//			System.err.println("ERROR: " + e);
+//			e.printStackTrace(System.out);
+//		}
+//
+//		System.out.println("SHEServer Exiting ...");
+//		System.out.println("Server is Up & Running");
+//
+//	}
+    public boolean checkCred(String adminID) {
+        if (adminUsers.containsKey(adminID)) {
+            this.adminID = adminID;
+            return (true);
+        }
 
-		try {
-			System.out.println("SHE Server ready and waiting ...");
-		}
+        return false;
+    }
 
-		catch (Exception e) {
-			System.err.println("ERROR: " + e);
-			e.printStackTrace(System.out);
-		}
-
-		System.out.println("SHEServer Exiting ...");
-		System.out.println("Server is Up & Running");
-		
-	}
 
 	public static Map<String, Map<String,ArrayList<String>>> getMap(){
 		return SHEMap;

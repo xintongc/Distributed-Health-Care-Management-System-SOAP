@@ -25,10 +25,6 @@ public class UDPRm {
             bytes = new byte[1024];
         } catch (UnknownHostException e) {
             e.printStackTrace();
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             // TODO: handle exception
         }
@@ -69,12 +65,6 @@ public class UDPRm {
             msg = new StdMaps("Connect for modifying");
         }catch (UnknownHostException e) {
             e.printStackTrace();
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         outputStream = new ByteArrayOutputStream();
@@ -93,7 +83,8 @@ public class UDPRm {
         StdMaps msg1 = (StdMaps) is.readObject();
         remoteMap = msg1;
 
-        StdMaps msg2 = new StdMaps(remoteMap);
+
+        StdMaps msg2 = new StdMaps(maps);
         os.writeObject(msg2);
         data = outputStream.toByteArray();
         sendPacket = new DatagramPacket(data, data.length, IPAddress, port);

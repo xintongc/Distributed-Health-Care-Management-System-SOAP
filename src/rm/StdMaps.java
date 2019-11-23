@@ -45,10 +45,29 @@ public class StdMaps implements Serializable {
         return str;
     }
 
+    public void print(){
+        System.out.println(stdPhysicianMTL);
+        System.out.println(stdSurgeonMTL);
+        System.out.println(stdDentalMTL);
+
+        System.out.println(stdPhysicianQUE);
+        System.out.println(stdSurgeonQUE);
+        System.out.println(stdDentalQUE);
+
+        System.out.println(stdPhysicianSHE);
+        System.out.println(stdSurgeonSHE);
+        System.out.println(stdDentalSHE);
+    }
+
     public void setTestMap(){
         ArrayList arrayList = new ArrayList();
-        arrayList.add("MTLP1");
+        arrayList.add("Testing");
         stdPhysicianMTL.put("MTLA123456",arrayList);
+
+    }
+
+    public String test(){
+        return stdPhysicianMTL.get("MTLA123456").get(0);
     }
 
 }

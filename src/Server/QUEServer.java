@@ -22,8 +22,7 @@ import java.util.Map;
 
 import Client.UDPClient;
 
-
-@WebService(endpointInterface = "Server.ServerInterface")
+//@WebService(endpointInterface = "Server.ServerInterface")
 public class QUEServer implements ServerInterface{
 
 	static Map<String, Map<String,ArrayList<String>>> QUEMap = new HashMap<String, Map<String,ArrayList<String>>>();
@@ -33,6 +32,9 @@ public class QUEServer implements ServerInterface{
 	PrintWriter outputTxtClient = null;
 	PrintWriter outputTxtServer = null;
 	Listening listening = new Listening();
+	public HashMap<String, String> adminUsers = new HashMap<String, String>();
+	private String adminID;
+
 
 
 	public QUEServer(){
@@ -56,21 +58,29 @@ public class QUEServer implements ServerInterface{
 		
 	}
 
-	public static void main(String args[]) throws Exception
-	{
-		
-		try {
-			System.out.println("QUE Server ready and waiting ...");
-		}
+//	public static void main(String args[]) throws Exception
+//	{
+//
+//		try {
+//			System.out.println("QUE Server ready and waiting ...");
+//		}
+//
+//		catch (Exception e) {
+//			System.err.println("ERROR: " + e);
+//			e.printStackTrace(System.out);
+//		}
+//
+//		System.out.println("QUEServer Exiting ...");
+//		System.out.println("Server is Up & Running");
+//
+//	}
+	public boolean checkCred(String adminID) {
+		if (adminUsers.containsKey(adminID)) {
+			this.adminID = adminID;
 
-		catch (Exception e) {
-			System.err.println("ERROR: " + e);
-			e.printStackTrace(System.out);
+			return (true);
 		}
-
-		System.out.println("QUEServer Exiting ...");
-		System.out.println("Server is Up & Running");
-		
+		return false;
 	}
 
 	public static Map<String, Map<String,ArrayList<String>>> getMap(){

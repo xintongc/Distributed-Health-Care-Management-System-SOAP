@@ -19,13 +19,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-
 import Client.BytesUtil;
 import Client.UDPClient;
-import rm.StdMaps;
 
-@WebService(endpointInterface = "Server.ServerInterface")
+//@WebService(endpointInterface = "Server.ServerInterface")
 public class MTLServer implements ServerInterface{
 
 	static Map<String, Map<String,ArrayList<String>>> MTLMap = new HashMap<String, Map<String,ArrayList<String>>>();
@@ -34,11 +31,14 @@ public class MTLServer implements ServerInterface{
 	private final int maxCapacity=3;
 	PrintWriter outputTxtClient = null;
 	PrintWriter outputTxtServer = null;
+	public HashMap<String, String> adminUsers = new HashMap<String, String>();
 
-//	StdMaps stdMaps;//////////
+
+
 
 
 	Listening listening = new Listening();
+	private String adminID;
 
 	public MTLServer(){
 		super();
@@ -58,27 +58,16 @@ public class MTLServer implements ServerInterface{
 		t3.put("MTLA111111",temp3);
 		MTLMap.put("Dental",t3);
 
-//		stdMaps = new StdMaps("Connect for listing");///////
-//		stdMaps.setTestMap();
-
 		listening.start();
 	}
 
-
-	public static void main(String args[]) throws Exception
-	{
-
-		try {
-			System.out.println("MTL Server ready and waiting ...");
+	public boolean checkCred(String adminID) {
+		if (adminUsers.containsKey(adminID)) {
+			this.adminID = adminID;
+			return (true);
 		}
 
-		catch (Exception e) {
-			System.err.println("ERROR: " + e);
-			e.printStackTrace(System.out);
-		}
-
-		System.out.println("MTLServer Exiting ...");
-		System.out.println("Server is Up & Running");
+		return false;
 	}
 
 	public static Map<String, Map<String,ArrayList<String>>> getMap(){
@@ -415,94 +404,6 @@ public class MTLServer implements ServerInterface{
 			System.out.println("");
 		}
 	}
-
-
-//	class Listening extends Thread{
-//		public DatagramSocket socketSer;
-//		public void run(){
-//
-//			try {
-//				socketSer = new DatagramSocket(1111);
-//
-//				while (true) {
-//					byte[] incomingData = new byte[1024];
-//					DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
-//					socketSer.receive(incomingPacket);
-//					byte[] data = incomingPacket.getData();
-//					ByteArrayInputStream in = new ByteArrayInputStream(data);
-//					ObjectInputStream is = new ObjectInputStream(in);
-//					String str="";
-//					try {
-//						StdMaps msg = (StdMaps) is.readObject();
-//						str=msg.getStr();
-//
-//						if(str.equalsIgnoreCase("Connect for listing")) {
-//							StdMaps msgSend=new StdMaps(stdMaps);
-//
-//							ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
-//							ObjectOutput os = new ObjectOutputStream(outputStream1);
-//							os.writeObject(msgSend);
-//
-//							InetAddress IPAddress = incomingPacket.getAddress();
-//							int port = incomingPacket.getPort();
-//
-//							byte[] dataSend = outputStream1.toByteArray();
-//							DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
-//							socketSer.send(replyPacket);
-////							writeTxtServerMTL("-","-","-","-","Send DB", "Success");
-//							outputStream1.close();
-//							os.close();
-//						}
-//						if(str.equalsIgnoreCase("Connect for modifying")) {
-//							StdMaps msgSend=new StdMaps(stdMaps);
-//
-//							ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
-//							ObjectOutput os = new ObjectOutputStream(outputStream1);
-//							os.writeObject(msgSend);
-//
-//							InetAddress IPAddress = incomingPacket.getAddress();
-//							int port = incomingPacket.getPort();
-//
-//							byte[] dataSend = outputStream1.toByteArray();
-//							DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
-//							socketSer.send(replyPacket);
-//
-//							socketSer.receive(incomingPacket);
-//							byte[] dataBack = incomingPacket.getData();
-//
-//
-//							StdMaps msg1=null;
-//							try {
-//								msg1 = (StdMaps) is.readObject();
-//							} catch (ClassNotFoundException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//							//return message from server.
-//							stdMaps=msg1;
-//							try {
-//								Thread.sleep(2000);
-//							} catch (InterruptedException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//
-//						}
-//					} catch (ClassNotFoundException e) {
-//						e.printStackTrace();
-//					}
-//				}
-//
-//			} catch (SocketException e) {
-//				e.printStackTrace();
-//			} catch (IOException i) {
-//				i.printStackTrace();
-//			}
-//
-//
-//		}
-//
-//	}
 
 
 	class Listening extends Thread{
