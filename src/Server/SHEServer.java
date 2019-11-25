@@ -89,7 +89,7 @@ public class SHEServer implements ServerInterface{
 	}
 
 	public static void setMap(Map<String, Map<String,ArrayList<String>>> map){
-		Map<String, Map<String,ArrayList<String>>> SHEMap = map;
+		SHEMap = map;
 	}
 
 	public synchronized boolean addAppointment(String appointmentID, String appointmentType, String strCapacity)

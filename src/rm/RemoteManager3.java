@@ -41,6 +41,7 @@ public class RemoteManager3 implements Runnable {
 
     
     public RemoteManager3() {
+    	System.setProperty("java.net.preferIPv4Stack", "true");
 //    	if(patientID.substring(3).equals("P")) {
 //    		this.patientID = patientID;	
 //    	}
@@ -94,9 +95,9 @@ public class RemoteManager3 implements Runnable {
 	        HashMap<String,String> msgQue = new HashMap<>();
 
 	        try {
-	            System.out.println("Remote Manager 1 up and running");
+	            System.out.println("Remote Manager 3 up and running");
 	            aSocket = new MulticastSocket(9001);
-	           // System.setProperty("java.net.preferIPv4Stack", "true");
+	           
 				InetAddress group = InetAddress.getByName("224.1.2.3");
 				aSocket.joinGroup(group);
 	            while (true) {
@@ -143,7 +144,7 @@ public class RemoteManager3 implements Runnable {
 	            }
 
 	        } catch (SocketException e) {
-	            System.out.println("Socket: " + e.getMessage());
+	            System.out.println("Socket firsts: " + e.getMessage());
 	        } catch (IOException e) {
 	            System.out.println("IO: " + e.getMessage());
 	        } finally {
@@ -169,7 +170,7 @@ public class RemoteManager3 implements Runnable {
 
                 InetAddress aHost = InetAddress.getByName("224.7.7.9");
                 ///send and receive reply from Sherbrooke
-                int seqPort = 5502;
+                int seqPort = 5503;
                 DatagramPacket request = new DatagramPacket(outgoing, outgoing.length, aHost, seqPort);
                 aSocket.send(request);
                 System.out.println("######## replyToFront "+FEseq+" replyToFront########");
@@ -536,7 +537,7 @@ public class RemoteManager3 implements Runnable {
 				response = "The appointment you entered does not exist in MTL Database. Please enter another one.";
 			}
 			result= mtlObj.removeAppointment(appointmentID, appointmentType);
-        }
+        } 
         if (loc.equals("SHE")) {
 			if(!sheObj.checkAppointmentExisted(appointmentID,appointmentType)){
 				response = "The appointment you entered does not exist in MTL Database. Please enter another one.";
@@ -623,18 +624,17 @@ public class RemoteManager3 implements Runnable {
 		}
 
 		String failedStr = failedReplica(stdLocalMap, stdRemoteMap1, stdRemoteMap2);
+		System.out.println(failedStr);
 		if(failedStr.equals("Remote1 Fail")){
 
 			try{
 				UDPRm.recoverRemoteMaps(remotePort1,stdLocalMap);
-//				UDPRm.recoverRemoteMaps(remotePort1);
 			}catch (Exception e){
 				e.printStackTrace();
 			}
 		}else if(failedStr.equals("Remote2 Fail")){
 			try{
 				UDPRm.recoverRemoteMaps(remotePort2,stdLocalMap);
-//				UDPRm.recoverRemoteMaps(remotePort2);
 			}catch (Exception e){
 				e.printStackTrace();
 			}
@@ -765,9 +765,10 @@ public class RemoteManager3 implements Runnable {
 							}
 							//return message from server.
 							stdMaps=msg1;
-							
-//							System.out.println("----------------");
-//							stdMaps.print();
+							setUniqueMap(stdMaps);
+
+							System.out.println("----------------");
+							stdMaps.print();
 
 							try {
 								Thread.sleep(2000);

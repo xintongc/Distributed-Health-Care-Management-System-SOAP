@@ -75,7 +75,7 @@ public class MTLServer implements ServerInterface{
 	}
 
 	public static void setMap(Map<String, Map<String,ArrayList<String>>> map){
-		Map<String, Map<String,ArrayList<String>>> MTLMap = map;
+		MTLMap = map;
 	}
 
 	public synchronized boolean addAppointment(String appointmentID, String appointmentType, String strCapacity)

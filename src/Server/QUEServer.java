@@ -88,7 +88,7 @@ public class QUEServer implements ServerInterface{
 	}
 
 	public static void setMap(Map<String, Map<String,ArrayList<String>>> map){
-		Map<String, Map<String,ArrayList<String>>> QUEMap = map;
+		QUEMap = map;
 	}
 
 	public synchronized boolean addAppointment(String appointmentID, String appointmentType, String strCapacity)

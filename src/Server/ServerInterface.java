@@ -21,6 +21,8 @@ public interface ServerInterface{
 
 	boolean listAppointmentAvailability (String appolointmentType);
 
+	boolean checkCred(String adminID);
+
 
 
 	void writeTxtClient (String clientID, String task, String resultStr);
@@ -30,7 +32,5 @@ public interface ServerInterface{
 	void writeTxtServerQUE (String clientID, String patientID, String appointmentType, String appointmentID, String task, String resultStr);
 
 	void writeTxtServerSHE (String clientID, String patientID, String appointmentType, String appointmentID, String task, String resultStr);
-
-	boolean checkCred(String adminID);
 
 }

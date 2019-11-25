@@ -1,18 +1,20 @@
 package rm;
 
-import Server.MTLServer;
-import Server.QUEServer;
-import Server.SHEServer;
+import RM_1.RemoteManager1;
 
 public class RM_3_Driver {
 
     public static void main(String[] args) {
-    	RemoteManager3 rm = new RemoteManager3();
-        StdMaps stdMaps = rm.getStdMaps();
+//    	RemoteManager3 rm = new RemoteManager3();
+    	RemoteManager1 rm1 = new RemoteManager1();
+    	rm1.setStdMapsFromUniqueMaps();
+    	rm1.getStdMaps().print();
+//
+//        StdMaps stdMaps = rm.getStdMaps();
+//        stdMaps.print();
 
-        StdMaps m2 = new StdMaps();
-        m2.setTestMap();
-        stdMaps.print();
+//        StdMaps m2 = new StdMaps();
+//        m2.setTestMap();
 
 //        try {
 //            StdMaps maps = UDPRm.getRemoteStdMaps(9898);
@@ -21,14 +23,21 @@ public class RM_3_Driver {
 //        } catch (Exception e){
 //            e.printStackTrace();
 //        }
+//
+//        try {
+//            StdMaps maps = UDPRm.getRemoteStdMaps(8787);
+//            maps.print();
+//
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
 
 
-        try {
-           UDPRm.recoverRemoteMaps(9898, m2);
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+//        try {
+//           UDPRm.recoverRemoteMaps(9898, m2);
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
 
     	
     	//test all methods here!
