@@ -1,4 +1,5 @@
 package rm;
+import Client.BytesUtil;
 import Client.UDPClient;
 import Server.MTLServer;
 import Server.QUEServer;
@@ -11,57 +12,32 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.nio.ByteBuffer;
+import java.util.*;
+import java.util.concurrent.Semaphore;
+import java.util.zip.CRC32;
 
 
-//Registry mtlRegistry = null;
-//Registry queRegistry = null;
-//Registry sheRegistry = null;
+
 public class RemoteManager3 implements Runnable {
 
 	ServerInterface mtlObj = null;
 	ServerInterface sheObj = null;
 	ServerInterface queObj = null;
-   // private String patientID = null;
-    
+
     boolean isAdmin;
-//    String patientID ="";
-//    String adminID = "";
     int seq=0;
 
 	StdMaps stdMaps;
-	Listening listening = new Listening();
 
 
 
 
-
-    
     public RemoteManager3() {
-    	System.setProperty("java.net.preferIPv4Stack", "true");
-//    	if(patientID.substring(3).equals("P")) {
-//    		this.patientID = patientID;	
-//    	}
-//    	
-//    	if(patientID.substring(3).equals("A")) {
-//    		this.adminID = patientID;
-//    		//???
-//    		//checkCred(String adminID);
-//    	}
-//        
-//        
-//        System.out.println(patientID);
-        
-     
-        	 
+
 			mtlObj = new MTLServer();
 			sheObj =  new SHEServer();
 			queObj =  new QUEServer();
-
-
 
 			Thread t1=new Thread(this);
 			t1.setName("This is frontEnd default thread");
@@ -69,10 +45,11 @@ public class RemoteManager3 implements Runnable {
 
 		stdMaps = new StdMaps();
 		setStdMapsFromUniqueMaps();
-		listening.start();
 
 //		System.out.println("init");
 //		stdMaps.print();
+
+		new Sender(3434,4545);
 
     }
 
@@ -613,37 +590,21 @@ public class RemoteManager3 implements Runnable {
 		StdMaps stdRemoteMap2 = null;
 		StdMaps stdLocalMap = stdMaps;
 
-		int remotePort1 = 8787;
-		int remotePort2 = 7676;
 
 		try {
-			stdRemoteMap1 = UDPRm.getRemoteStdMaps(remotePort1);
-			stdRemoteMap2 = UDPRm.getRemoteStdMaps(remotePort2);
+			stdRemoteMap2 = MapReciever.getStdMaps(6565,4343);
+			stdRemoteMap1 = MapReciever.getStdMaps(8787,7676);
 		} catch (Exception e){
 			e.printStackTrace();
 		}
 
 		String failedStr = failedReplica(stdLocalMap, stdRemoteMap1, stdRemoteMap2);
 		System.out.println(failedStr);
-		if(failedStr.equals("Remote1 Fail")){
-
-			try{
-				UDPRm.recoverRemoteMaps(remotePort1,stdLocalMap);
-			}catch (Exception e){
-				e.printStackTrace();
-			}
-		}else if(failedStr.equals("Remote2 Fail")){
-			try{
-				UDPRm.recoverRemoteMaps(remotePort2,stdLocalMap);
-			}catch (Exception e){
-				e.printStackTrace();
-			}
-		}else if(failedStr.equals("No Fail")){
-			//do nothing
-		} else {
-			System.out.println("Warning: fail to recover the replica");
+		if(failedStr.equals("LocalMaps Fail")){
+			stdMaps = stdRemoteMap1;
+			System.out.println("RM3 recovered");
+			new Sender(2121,1010);
 		}
-
 	}
 
 
@@ -703,105 +664,251 @@ public class RemoteManager3 implements Runnable {
 	}
 
 
-	class Listening extends Thread{
-		public DatagramSocket socketSer;
-		public void run(){
+	public class Sender {
+		int data_size = 988;            // (checksum:8, seqNum:4, data<=988) Bytes : 1000 Bytes total
+		int win_size = 10;
+		int timeoutVal = 300;        // 300ms until timeout
 
-			try {
-				socketSer = new DatagramSocket(9898);
+		int base;                    // base sequence number of window
+		int nextSeqNum;                // next sequence number in window
+		Vector<byte[]> packetsList;    // list of generated packets
+		Timer timer;                // for timeouts
+		Semaphore s;                // guard CS for base, nextSeqNum
+		boolean isTransferComplete;    // if receiver has completely received the file
 
-				while (true) {
-					byte[] incomingData = new byte[1024];
-					DatagramPacket incomingPacket = new DatagramPacket(incomingData, incomingData.length);
-					socketSer.receive(incomingPacket);
-					byte[] data = incomingPacket.getData();
-					ByteArrayInputStream in = new ByteArrayInputStream(data);
-					ObjectInputStream is = new ObjectInputStream(in);
-					String str="";
-					try {
-						StdMaps msg = (StdMaps) is.readObject();
-						str=msg.getStr();
-
-						if(str.equalsIgnoreCase("Connect for listing")) {
-							StdMaps msgSend=new StdMaps(stdMaps);
-
-							ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
-							ObjectOutput os = new ObjectOutputStream(outputStream1);
-							os.writeObject(msgSend);
-
-							InetAddress IPAddress = incomingPacket.getAddress();
-							int port = incomingPacket.getPort();
-
-							byte[] dataSend = outputStream1.toByteArray();
-							DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
-							socketSer.send(replyPacket);
-							outputStream1.close();
-							os.close();
-						}
-						if(str.equalsIgnoreCase("Connect for modifying")) {
-							StdMaps msgSend=new StdMaps(stdMaps);
-
-							ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
-							ObjectOutput os = new ObjectOutputStream(outputStream1);
-							os.writeObject(msgSend);
-
-							InetAddress IPAddress = incomingPacket.getAddress();
-							int port = incomingPacket.getPort();
-
-							byte[] dataSend = outputStream1.toByteArray();
-							DatagramPacket replyPacket =new DatagramPacket(dataSend, dataSend.length, IPAddress, port);
-							socketSer.send(replyPacket);
-
-							socketSer.receive(incomingPacket);
-							byte[] dataBack = incomingPacket.getData();
-
-
-							StdMaps msg1=null;
-							try {
-								msg1 = (StdMaps) is.readObject();
-							} catch (ClassNotFoundException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							//return message from server.
-							stdMaps=msg1;
-							setUniqueMap(stdMaps);
-
-							System.out.println("----------------");
-							stdMaps.print();
-
-							try {
-								Thread.sleep(2000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-
-						}
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					}
-				}
-
-			} catch (SocketException e) {
-				e.printStackTrace();
-			} catch (IOException i) {
-				i.printStackTrace();
+		// to start or stop the timer
+		public void setTimer(boolean isNewTimer) {
+			if (timer != null) timer.cancel();
+			if (isNewTimer) {
+				timer = new Timer();
+				timer.schedule(new Timeout(), timeoutVal);
 			}
-
-
 		}
 
+		// CLASS OutThread
+		public class OutThread extends Thread {
+			private DatagramSocket sk_out;
+			private int dst_port;
+			private InetAddress dst_addr;
+			private int recv_port;
+
+			// OutThread constructor
+			public OutThread(DatagramSocket sk_out, int dst_port, int recv_port) {
+				this.sk_out = sk_out;
+				this.dst_port = dst_port;
+				this.recv_port = recv_port;
+			}
+
+			// constructs the packet prepended with header information
+			public byte[] generatePacket(int seqNum, byte[] dataBytes) {
+				byte[] seqNumBytes = ByteBuffer.allocate(4).putInt(seqNum).array();                // Seq num (4 bytes)
+
+				// generate checksum
+				CRC32 checksum = new CRC32();
+				checksum.update(seqNumBytes);
+				checksum.update(dataBytes);
+				byte[] checksumBytes = ByteBuffer.allocate(8).putLong(checksum.getValue()).array();    // checksum (8 bytes)
+
+				// generate packet
+				ByteBuffer pktBuf = ByteBuffer.allocate(8 + 4 + dataBytes.length);
+				pktBuf.put(checksumBytes);
+				pktBuf.put(seqNumBytes);
+				pktBuf.put(dataBytes);
+				return pktBuf.array();
+			}
+
+			// sending process (updates nextSeqNum)
+			public void run(){
+				try{
+					dst_addr = InetAddress.getByName("127.0.0.1"); // resolve dst_addr
+					// create byte stream
+
+					ByteArrayOutputStream outputStream1 = new ByteArrayOutputStream();
+					ObjectOutput os = new ObjectOutputStream(outputStream1);
+					os.writeObject(stdMaps);
+
+					try {
+						// while there are still packets yet to be received by receiver
+						while (!isTransferComplete){
+							// send packets if window is not yet full
+
+							if (nextSeqNum < base + win_size){
+
+								s.acquire();	/***** enter CS *****/
+								if (base == nextSeqNum) setTimer(true);	// if first packet of window, start timer
+
+								byte[] out_data = new byte[10];
+								boolean isFinalSeqNum = false;
+
+								// if packet is in packetsList, retrieve from list
+								if (nextSeqNum < packetsList.size()){
+									out_data = packetsList.get(nextSeqNum);
+								}
+								// else construct packet and add to list
+								else{
+									// if first packet, special handling: prepend file information
+									if (nextSeqNum == 0){
+										byte[] fileNameBytes = outputStream1.toByteArray();
+										byte[] fileNameLengthBytes = ByteBuffer.allocate(4).putInt(fileNameBytes.length).array();
+										ByteBuffer BB = ByteBuffer.allocate(4 + fileNameBytes.length);
+										BB.put(fileNameLengthBytes);	// file name length
+										BB.put(fileNameBytes);			// file name
+										out_data = generatePacket(nextSeqNum, BB.array());
+									}
+									// else if subsequent packets
+									else{
+										isFinalSeqNum = true;
+										out_data = generatePacket(nextSeqNum, new byte[0]);
+									}
+									packetsList.add(out_data);	// add to packetsList
+								}
+
+								// send the packet
+								sk_out.send(new DatagramPacket(out_data, out_data.length, dst_addr, dst_port));
+//								System.out.println("Sender: Sent seqNum " + nextSeqNum);
+
+								// update nextSeqNum if currently not at FinalSeqNum
+								if (!isFinalSeqNum) nextSeqNum++;
+								s.release();
+							}
+							sleep(5);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						setTimer(false);	// close timer
+						sk_out.close();		// close outgoing socket
+						os.close();
+						System.out.println("Sender: sk_out closed!");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.exit(-1);
+				}
+			}
+		}// END CLASS OutThread
+
+		// CLASS InThread
+		public class InThread extends Thread {
+			private DatagramSocket sk_in;
+
+			// InThread constructor
+			public InThread(DatagramSocket sk_in) {
+				this.sk_in = sk_in;
+			}
+
+			// returns -1 if corrupted, else return Ack number
+			int decodePacket(byte[] pkt) {
+				byte[] received_checksumBytes = copyOfRange(pkt, 0, 8);
+				byte[] ackNumBytes = copyOfRange(pkt, 8, 12);
+				CRC32 checksum = new CRC32();
+				checksum.update(ackNumBytes);
+				byte[] calculated_checksumBytes = ByteBuffer.allocate(8).putLong(checksum.getValue()).array();// checksum (8 bytes)
+				if (Arrays.equals(received_checksumBytes, calculated_checksumBytes))
+					return ByteBuffer.wrap(ackNumBytes).getInt();
+				else return -1;
+			}
+
+			// receiving process (updates base)
+			public void run() {
+				try {
+					byte[] in_data = new byte[12];    // ack packet with no data
+					DatagramPacket in_pkt = new DatagramPacket(in_data, in_data.length);
+					try {
+						// while there are still packets yet to be received by receiver
+						while (!isTransferComplete) {
+
+							sk_in.receive(in_pkt);
+							int ackNum = decodePacket(in_data);
+							System.out.println("Sender: Received Ack " + ackNum);
+
+							// if ack is not corrupted
+							if (ackNum != -1) {
+								// if duplicate ack
+								if (base == ackNum + 1) {
+									s.acquire();    /***** enter CS *****/
+									setTimer(false);        // off timer
+									nextSeqNum = base;        // resets nextSeqNum
+									s.release();    /***** leave CS *****/
+								}
+								// else if teardown ack
+								else if (ackNum == -2) isTransferComplete = true;
+									// else normal ack
+								else {
+									base = ackNum++;    // update base number
+									s.acquire();    /***** enter CS *****/
+									if (base == nextSeqNum)
+										setTimer(false);    // if no more unacknowledged packets in pipe, off timer
+									else
+										setTimer(true);                        // else packet acknowledged, restart timer
+									s.release();    /***** leave CS *****/
+								}
+							}
+							// else if ack corrupted, do nothing
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						sk_in.close();
+						System.out.println("Sender: sk_in closed!");
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.exit(-1);
+				}
+			}
+		}// END CLASS InThread
+
+
+		// Timeout task
+		public class Timeout extends TimerTask {
+			public void run() {
+				try {
+					s.acquire();    /***** enter CS *****/
+//					System.out.println("Sender: Timeout!");
+					nextSeqNum = base;    // resets nextSeqNum
+					s.release();    /***** leave CS *****/
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}// END CLASS Timeout
+
+		// sender constructor
+		public Sender(int sk1_dst_port, int sk4_dst_port) {
+			base = 0;
+			nextSeqNum = 0;
+			packetsList = new Vector<byte[]>(win_size);
+			isTransferComplete = false;
+			DatagramSocket sk1, sk4;
+			s = new Semaphore(1);
+			System.out.println("Sender: sk1_dst_port=" + sk1_dst_port + ", sk4_dst_port=" + sk4_dst_port);
+
+			try {
+				// create sockets
+				sk1 = new DatagramSocket();                // outgoing channel
+				sk4 = new DatagramSocket(sk4_dst_port);    // incoming channel
+
+				// create threads to process data
+				InThread th_in = new InThread(sk4);
+				OutThread th_out = new OutThread(sk1, sk1_dst_port, sk4_dst_port);
+				th_in.start();
+				th_out.start();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
+		}// END Sender constructor
+
+		// same as Arrays.copyOfRange in 1.6
+		public byte[] copyOfRange(byte[] srcArr, int start, int end) {
+			int length = (end > srcArr.length) ? srcArr.length - start : end - start;
+			byte[] destArr = new byte[length];
+			System.arraycopy(srcArr, start, destArr, 0, length);
+			return destArr;
+		}
 	}
-
-
-
-
-
-   
-
-    
-
 
 
 }

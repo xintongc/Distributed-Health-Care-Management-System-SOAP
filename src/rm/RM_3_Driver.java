@@ -5,10 +5,10 @@ import RM_1.RemoteManager1;
 public class RM_3_Driver {
 
     public static void main(String[] args) {
-//    	RemoteManager3 rm = new RemoteManager3();
-    	RemoteManager1 rm1 = new RemoteManager1();
-    	rm1.setStdMapsFromUniqueMaps();
-    	rm1.getStdMaps().print();
+    	RemoteManager3 rm = new RemoteManager3();
+//    	RemoteManager1 rm1 = new RemoteManager1();
+//		rm.setStdMapsFromUniqueMaps();
+//		rm.getStdMaps().print();
 //
 //        StdMaps stdMaps = rm.getStdMaps();
 //        stdMaps.print();
